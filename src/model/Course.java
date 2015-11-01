@@ -312,7 +312,3 @@ public class Course {
 	}
 
 }
-
-enum Certificate {
-	YES, NO
-}
