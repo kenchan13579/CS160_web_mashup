@@ -47,7 +47,7 @@ public class CanvasScrapper implements CourseScrapper {
 				while ((temp = in.readLine()) != null) {
 					jsonstr.append(temp);
 				}
-				// jsonify begins
+				// json parsing begins
 				JsonParser jp = new JsonParser();
 				JsonElement je = jp.parse(jsonstr.toString());
 				JsonObject jsonObj = je.getAsJsonObject();
