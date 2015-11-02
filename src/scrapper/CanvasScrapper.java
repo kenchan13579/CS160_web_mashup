@@ -1,49 +1,74 @@
 package scrapper;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
-
-import model.Certificate;
-import model.Course;
-import model.CourseDetails;
+import com.google.gson.*;
+import jdk.nashorn.internal.parser.JSONParser;
+import model.*;
 
 public class CanvasScrapper implements CourseScrapper {
-	
+
 	String homepage = "https://www.canvas.net";
 	String site = "Canvas";
 	LocalDate timeScraped;
-	DateTimeFormatter canvasDateFormatter = DateTimeFormatter.ofPattern("MMM. d, yyyy");
+	DateTimeFormatter canvasDateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy").withLocale(Locale.US);
+	List<Course> res;
+
 	public CanvasScrapper() {
 		timeScraped = LocalDate.now();
+		res = new ArrayList<>();
 	}
+
 	@Override
 	public List<Course> scrapeCourses() {
 		try {
-			Document catalogDoc = Jsoup.connect(homepage).get();
-			System.out.println(catalogDoc.title());
-			Elements courseStubElements = catalogDoc.select(".course-title.product-tile");
-			System.out.println(courseStubElements.toString());
-			return courseStubElements.parallelStream() // parallel for efficency
-					.map(courseStub -> parseCourseStub(courseStub)) // parse
-					.filter(out -> out != null) // remove all null results.
-					.collect(Collectors.toList());
-
+			int remaining = Integer.MAX_VALUE;
+			int pageNum = 1;
+			
+			while (remaining > 0) {
+				// parsing Canvas' json data
+				URL url = new URL(homepage + "/products.json?page=" + pageNum + "&query=");
+				HttpURLConnection request = (HttpURLConnection) url.openConnection();
+				request.setRequestMethod("GET");
+				request.connect();
+				// read response data from stream into string			
+				BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream()));
+				StringBuilder jsonstr = new StringBuilder();
+				String temp;
+				while ((temp = in.readLine()) != null) {
+					jsonstr.append(temp);
+				}
+				// jsonify begins
+				JsonParser jp = new JsonParser();
+				JsonElement je = jp.parse(jsonstr.toString());
+				JsonObject jsonObj = je.getAsJsonObject();
+				JsonArray products = jsonObj.getAsJsonArray("products");
+				for (JsonElement j : products) {
+					parseCourseStub(j);
+				}
+				remaining = jsonObj.get("remaining").getAsInt();
+				pageNum++;
+				request.disconnect();
+			}
+			return res;
 		} catch (IOException e) {
 			System.out.println("Unable to connect to Iversity homepage at: " + homepage);
 			System.out.println("Exception is: " + e.toString());
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
+
 	}
+
 	/**
 	 * Using the coursestub from the homepage, parse some info, then follow the
 	 * link to the full course description, and parse the rest of the available
@@ -60,28 +85,29 @@ public class CanvasScrapper implements CourseScrapper {
 	 *            we need.
 	 * @return the parsed Course
 	 */
-	private Course parseCourseStub(Element courseStub) {
-
-		
+	private void parseCourseStub(JsonElement json) {
+		JsonObject obj = json.getAsJsonObject();
 
 		// Extract all possible info from the stub
-		String title = getTitleFromStub(courseStub);
-		String shortDescription = getShortDescFromStub(courseStub);
-		String courseLink = getCourseLinkFromStub(courseStub);
+		String title = obj.get("title").getAsString();
+		String shortDescription = obj.get("teaser").getAsString();
+		String courseLink = obj.get("url").getAsString();
 		String language = null; // Canvas has English only
-		String courseImage = getCourseImageFromStub(courseStub);
+		String courseImage = obj.get("image").getAsString();
 
 		// //Follow to the full course description
 		Document fullCourseDoc = null;
 		try {
+
 			fullCourseDoc = Jsoup.connect(courseLink).get();
 		} catch (IOException e) {
 			System.out.println("Unable to connect to full course at: " + courseLink);
 			System.out.println("Exception is: " + e.toString());
 			e.printStackTrace();
 			// Return what course info we have so far.
-			return new Course(title, shortDescription, null, courseLink, null, null, 0, courseImage, null, courseLink,
-					0, null, null, null, timeScraped, null);
+			res.add(new Course(title, shortDescription, null, courseLink, null, null, 0, courseImage, null, courseLink,
+					0, null, null, null, timeScraped, null));
+			return;
 		}
 
 		// Now that we have the full course page, parse the rest of the
@@ -90,45 +116,25 @@ public class CanvasScrapper implements CourseScrapper {
 		String videoLink = getVideoLinkFromCourse(fullCourseDoc); // null
 		LocalDate startDate = getStartDateFromCourse(fullCourseDoc);
 		int courseLength = getCourseLengthFromCourse(fullCourseDoc);
-		String categorey = getCategoryFromCourse(fullCourseDoc);
-		int courseFee = getCourseFeeFromCourse(fullCourseDoc);
-		String university = getUniversityFromCourse(fullCourseDoc);
-		Certificate certficate = getCertificateFromCourse(fullCourseDoc);
+		String categorey = obj.get("type").getAsString();
+		int courseFee = 0;
+		if (!obj.get("free").getAsBoolean()) {
+			// free -> true , else false
+			String priceWithPriceTag = obj.get("priceWithCurrency").getAsString();
+			// format "$[0-9]*"
+			courseFee = Integer.valueOf(priceWithPriceTag.substring(1));
+		}
+		String university = obj.get("logo").getAsJsonObject().get("label").getAsString();
+		Certificate certficate = null;// canvas doesn't have
 		CourseDetails details = getCourseDetailsFromCourse(fullCourseDoc);
-
-		return new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength,
-				courseImage, categorey, university, courseFee, language, university, certficate, startDate, details);
-	}
-
-	
-
-	private String getTitleFromStub(Element courseStub) {
-		return courseStub.select("h3[class=product-title]").text();
-	}
-
-	private String getShortDescFromStub(Element courseStub) {
-		return courseStub.select("a[class=sr-only]").text();
-	}
-
-	private String getCourseLinkFromStub(Element courseStub) {
-		return courseStub.select("a[class=hover-link]").get(0).attr("abs:href");
-	}
-
-	/*private String getLanguageFromStub(Element courseStub) {
-		return courseStub.select("li[title=Language]").select("span").text();
-	}*/
-
-	private String getCourseImageFromStub(Element courseStub) {
-		String style = courseStub.select("span[class=image-wrapper]").get(0).attr("style");
-		// Format: "background-image: url(<SOME IMAGE URL>)"
-		// Only want the URL value between the parentheses
-		return style.substring(style.indexOf("(") + 1, style.indexOf(")"));
+		res.add(new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength,
+				courseImage, categorey, university, courseFee, language, university, certficate, startDate, details));
 	}
 
 	private String getLongDescriptionFromCourse(Document fullCourseDoc) {
 		StringBuilder longDesc = new StringBuilder();
-		Elements paragraphs =  fullCourseDoc.select("div[class=course-details] p");
-		for ( Element p : paragraphs) {
+		Elements paragraphs = fullCourseDoc.select("div[class=course-details] p");
+		for (Element p : paragraphs) {
 			longDesc.append(p.text());
 		}
 		return longDesc.toString();
@@ -137,24 +143,24 @@ public class CanvasScrapper implements CourseScrapper {
 	private String getVideoLinkFromCourse(Document fullCourseDoc) {
 		Element videoElement = fullCourseDoc.select("#course-video-iframe").first();
 		if (videoElement == null) {
-			System.out.println("No video found for course.");
+			// System.out.println("No video found for course.");
 			return null;
 		} else {
 			return videoElement.attr("src");
 		}
 
 	}
-
-	/*
-	 * Iversity lists both present and past courses. This will be either the
-	 * start or possibly end date.
-	 */
+	// regex pattern to match the date format
+	private final Pattern r = Pattern.compile("(\\w*\\s)?([a-zA-z]*?\\s[0-9]{1,2},\\s[0-9]{4})(.*)?");
 	private LocalDate getStartDateFromCourse(Document fullCourseDoc) {
-		String date =  fullCourseDoc.select("div[class=course-details] h5").text();
-		//  date string format -> "Starts mm dd,yyyy"
-		int from = "Starts ".length();
-		date = date.substring(from);
-		// Parse the date from iveristy's format.
+		String date = fullCourseDoc.select("div[class=course-details] h5").text();
+		Matcher m = r.matcher(date);
+		if (m.find()) {
+			date = m.group(2);
+		} else {
+			// either is empty or is "Self-paced"
+			return null;
+		}
 		return LocalDate.parse(date, canvasDateFormatter);
 	}
 
@@ -165,7 +171,8 @@ public class CanvasScrapper implements CourseScrapper {
 	private int getCourseLengthFromCourse(Document fullCourseDoc) {
 		Element courseLengthIcon = fullCourseDoc.select("i[class=fa fa-bell fa-fw]").first();
 		if (courseLengthIcon == null) {
-			System.out.println("Warning: No course length found for course.");
+			// System.out.println("Warning: No course length found for
+			// course.");
 			return 0;
 		}
 
@@ -175,38 +182,6 @@ public class CanvasScrapper implements CourseScrapper {
 		return Integer.parseInt(courseLength.split("\\s")[0]);
 	}
 
-	private String getCategoryFromCourse(Document fullCourseDoc) {
-		//return fullCourseDoc.select("i[class=fa fa-bookmark fa-fw]").get(0).parent().text();
-		return null;
-	}
-
-	/*
-	 Canvas courses all seem to be free
-	 */
-	private int getCourseFeeFromCourse(Document fullCourseDoc) {
-		return 0;
-	}
-
-	/*
-	 * Fortunately Canvas has alt & title tags :D
-	 */
-	private String getUniversityFromCourse(Document fullCourseDoc) {
-		return fullCourseDoc.select("img.product-account-logo").attr("alt");
-	}
-
-	/*
-	 * Some courses offer certificates, others don't. I'm doing a pretty basic
-	 * search to establish if the certificate option is there or not.
-	 */
-	private Certificate getCertificateFromCourse(Document fullCourseDoc) {
-		boolean hasCertOption = fullCourseDoc.select("h2[class=truncate]").text().contains("Certificate Track");
-		if (hasCertOption) {
-			return Certificate.YES;
-		} else {
-			return Certificate.NO;
-		}
-	}
-
 	/*
 	 * Many courses have more than one Professor. I'm only getting the first.
 	 */
@@ -214,6 +189,6 @@ public class CanvasScrapper implements CourseScrapper {
 		Element instructor = fullCourseDoc.select(".instructors").first();
 		String profName = instructor.select("h3").text();
 		String profImgUrl = instructor.select("img").attr("src");
-		return new CourseDetails(profName,profImgUrl);
+		return new CourseDetails(profName, profImgUrl);
 	}
 }
