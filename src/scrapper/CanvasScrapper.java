@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
@@ -61,29 +60,18 @@ public class CanvasScrapper implements CourseScrapper {
 			}
 			return res;
 		} catch (IOException e) {
-			System.out.println("Unable to connect to Iversity homepage at: " + homepage);
+			System.out.println("Unable to connect to Canvas homepage at: " + homepage);
 			System.out.println("Exception is: " + e.toString());
 			e.printStackTrace();
-			return new ArrayList<>();
+			return res;
 		}
 
 	}
 
 	/**
-	 * Using the coursestub from the homepage, parse some info, then follow the
-	 * link to the full course description, and parse the rest of the available
-	 * information.
-	 * 
-	 * Note: This currently ignores the "pro" courses since they are in a
-	 * different format.
-	 * 
-	 * TODO: include those Pro courses.
-	 * 
-	 * @param courseStub
-	 *            This is the DOM element of the course listed on the homepage.
-	 *            This contains some information, but not all of the information
-	 *            we need.
-	 * @return the parsed Course
+	 * With the json object otained from Canvas web service
+	 * All info about each course will be parsed and passed to the our <Course> Object
+	 * @param json a `product` json object with title,teaser,image,url,etc
 	 */
 	private void parseCourseStub(JsonElement json) {
 		JsonObject obj = json.getAsJsonObject();
@@ -94,29 +82,15 @@ public class CanvasScrapper implements CourseScrapper {
 		String courseLink = obj.get("url").getAsString();
 		String language = null; // Canvas has English only
 		String courseImage = obj.get("image").getAsString();
-
-		// //Follow to the full course description
-		Document fullCourseDoc = null;
-		try {
-
-			fullCourseDoc = Jsoup.connect(courseLink).get();
-		} catch (IOException e) {
-			System.out.println("Unable to connect to full course at: " + courseLink);
-			System.out.println("Exception is: " + e.toString());
-			e.printStackTrace();
-			// Return what course info we have so far.
-			res.add(new Course(title, shortDescription, null, courseLink, null, null, 0, courseImage, null, courseLink,
-					0, null, null, null, timeScraped, null));
-			return;
-		}
-
-		// Now that we have the full course page, parse the rest of the
-		// information.
-		String longDescription = getLongDescriptionFromCourse(fullCourseDoc);
-		String videoLink = getVideoLinkFromCourse(fullCourseDoc); // null
-		LocalDate startDate = getStartDateFromCourse(fullCourseDoc);
-		int courseLength = getCourseLengthFromCourse(fullCourseDoc);
 		String categorey = obj.get("type").getAsString();
+		String lang = "English"; 
+		String university = obj.get("logo").getAsJsonObject().get("label").getAsString();
+		String courseLength = 0 ; // don't see any course length info so far. Need to check 
+		String videoLink = null;  // a few page might have a youtube player. Didn't do implementation regards those. Need to check
+		String longDescription = null;
+		LocalDate startDate = null;
+		Certificate certficate = Certificate.NO;// canvas doesn't have
+		CourseDetails details = null;
 		int courseFee = 0;
 		if (!obj.get("free").getAsBoolean()) {
 			// free -> true , else false
@@ -124,32 +98,43 @@ public class CanvasScrapper implements CourseScrapper {
 			// format "$[0-9]*"
 			courseFee = Integer.valueOf(priceWithPriceTag.substring(1));
 		}
-		String university = obj.get("logo").getAsJsonObject().get("label").getAsString();
-		Certificate certficate = null;// canvas doesn't have
-		CourseDetails details = getCourseDetailsFromCourse(fullCourseDoc);
+		Document fullCourseDoc = null;
+		try {
+			// Attemp to get to the course page 
+			fullCourseDoc = Jsoup.connect(courseLink).get();
+		} catch (IOException e) {
+			System.out.println("Unable to connect to full course at: " + courseLink);
+			System.out.println("Exception is: " + e.toString());
+			e.printStackTrace();
+			// Failed. Return what course info we have so far.
+			res.add(new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength, courseImage, categorey, site,
+					courseFee, lang, university, certficate, timeScraped, details));
+			return;
+		}
+		// Now that we have the full course page, parse the rest of the information.
+		longDescription = getLongDescriptionFromCourse(fullCourseDoc);
+		startDate = getStartDateFromCourse(fullCourseDoc);
+		details = getCourseDetailsFromCourse(fullCourseDoc);
 		res.add(new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength,
-				courseImage, categorey, university, courseFee, language, university, certficate, startDate, details));
+				courseImage, categorey, site, courseFee, lang, university, certficate, timeScraped, details));
 	}
-
+	/**
+	 * Some .course-detail p has a youtube player so it might have unexpected parse result
+	 * We'll look at the data  later
+	 * @param  fullCourseDoc dom element
+	 * @return  full description for the course
+	 */
 	private String getLongDescriptionFromCourse(Document fullCourseDoc) {
 		StringBuilder longDesc = new StringBuilder();
 		Elements paragraphs = fullCourseDoc.select("div[class=course-details] p");
 		for (Element p : paragraphs) {
 			longDesc.append(p.text());
+			longDesc.append("\n");
 		}
 		return longDesc.toString();
 	}
 
-	private String getVideoLinkFromCourse(Document fullCourseDoc) {
-		Element videoElement = fullCourseDoc.select("#course-video-iframe").first();
-		if (videoElement == null) {
-			// System.out.println("No video found for course.");
-			return null;
-		} else {
-			return videoElement.attr("src");
-		}
-
-	}
+	
 	// regex pattern to match the date format
 	private final Pattern r = Pattern.compile("(\\w*\\s)?([a-zA-z]*?\\s[0-9]{1,2},\\s[0-9]{4})(.*)?");
 	private LocalDate getStartDateFromCourse(Document fullCourseDoc) {
@@ -164,26 +149,9 @@ public class CanvasScrapper implements CourseScrapper {
 		return LocalDate.parse(date, canvasDateFormatter);
 	}
 
-	/*
-	 * Returning the number of weeks for the course length, since it has to be
-	 * an int for some reason.
-	 */
-	private int getCourseLengthFromCourse(Document fullCourseDoc) {
-		Element courseLengthIcon = fullCourseDoc.select("i[class=fa fa-bell fa-fw]").first();
-		if (courseLengthIcon == null) {
-			// System.out.println("Warning: No course length found for
-			// course.");
-			return 0;
-		}
-
-		String courseLength = courseLengthIcon.parent().text();
-		// courseLength includes weeks. Ex: 10 weeks.
-		// Only want the number of weeks.
-		return Integer.parseInt(courseLength.split("\\s")[0]);
-	}
 
 	/*
-	 * Many courses have more than one Professor. I'm only getting the first.
+	 * Some courses have more than one Professor. I'm only getting the first as well.
 	 */
 	private CourseDetails getCourseDetailsFromCourse(Document fullCourseDoc) {
 		Element instructor = fullCourseDoc.select(".instructors").first();
