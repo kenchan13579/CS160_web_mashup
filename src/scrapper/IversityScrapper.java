@@ -99,6 +99,8 @@ public class IversityScrapper implements CourseScrapper {
 		String university = getUniversityFromCourse(fullCourseDoc);
 		Certificate certficate = getCertificateFromCourse(fullCourseDoc);
 		CourseDetails details = getCourseDetailsFromCourse(fullCourseDoc);
+		
+		System.out.println("Parsed Iversity course: " + title);
 
 		return new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength,
 				courseImage, categorey, university, courseFee, language, university, certficate, startDate, details);
@@ -138,7 +140,7 @@ public class IversityScrapper implements CourseScrapper {
 	private String getVideoLinkFromCourse(Document fullCourseDoc) {
 		Element videoElement = fullCourseDoc.select("#course-video-iframe").first();
 		if (videoElement == null) {
-			System.out.println("No video found for course.");
+			// System.out.println("No video found for course.");
 			return null;
 		} else {
 			return videoElement.attr("src");
@@ -167,7 +169,7 @@ public class IversityScrapper implements CourseScrapper {
 	private int getCourseLengthFromCourse(Document fullCourseDoc) {
 		Element courseLengthIcon = fullCourseDoc.select("i[class=fa fa-bell fa-fw]").first();
 		if (courseLengthIcon == null) {
-			System.out.println("Warning: No course length found for course.");
+			//System.out.println("Warning: No course length found for course.");
 			return 0;
 		}
 
@@ -220,7 +222,7 @@ public class IversityScrapper implements CourseScrapper {
 	private CourseDetails getCourseDetailsFromCourse(Document fullCourseDoc) {
 		Elements profElements = fullCourseDoc.select("img[class=avatar]");
 		if (profElements.isEmpty()) {
-			System.out.println("Warning: No professor found for course.");
+			//System.out.println("Warning: No professor found for course.");
 			return new CourseDetails();
 		} else {
 			Element profElement = profElements.first();

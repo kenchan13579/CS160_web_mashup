@@ -14,7 +14,7 @@ public class ScrapperRunner {
 
 		// courses should be dumped in db here.
 
-		System.out.println(courses);
+		System.out.println("We found " + courses.size() + " courses.");
 
 	}
 
@@ -23,7 +23,8 @@ public class ScrapperRunner {
 		scrapers.add(new CanvasScrapper());
 		scrapers.add(new IversityScrapper());
 
-		return scrapers.stream().flatMap(scraper -> scraper.scrapeCourses().stream()).collect(Collectors.toList());
+		return scrapers.parallelStream().flatMap(scraper -> scraper.scrapeCourses().stream())
+				.collect(Collectors.toList());
 	}
 
 }
