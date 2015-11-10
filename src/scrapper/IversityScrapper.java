@@ -3,6 +3,7 @@ package scrapper;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +23,10 @@ public class IversityScrapper implements CourseScrapper {
 	String site = "Iversity";
 	LocalDate timeScraped;
 	DateTimeFormatter iversityDateFormatter = DateTimeFormatter.ofPattern("d MMM. yyyy");
-
+	List<Course> res;
 	public IversityScrapper() {
 		timeScraped = LocalDate.now();
+		res = new ArrayList<>();
 	}
 
 	@Override
@@ -36,6 +38,7 @@ public class IversityScrapper implements CourseScrapper {
 					.map(courseStub -> parseCourseStub(courseStub)) // parse
 					.filter(out -> out != null) // remove all null results.
 					.collect(Collectors.toList());
+			
 
 		} catch (IOException e) {
 			System.out.println("Unable to connect to Iversity homepage at: " + homepage);
@@ -101,9 +104,10 @@ public class IversityScrapper implements CourseScrapper {
 		CourseDetails details = getCourseDetailsFromCourse(fullCourseDoc);
 		
 		System.out.println("Parsed Iversity course: " + title);
-
+		
+		
 		return new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength,
-				courseImage, categorey, university, courseFee, language, university, certficate, startDate, details);
+				courseImage, categorey, university, courseFee, language, university, certficate, timeScraped, details);
 	}
 
 	private boolean isProCourse(Element courseStub) {
@@ -141,7 +145,7 @@ public class IversityScrapper implements CourseScrapper {
 		Element videoElement = fullCourseDoc.select("#course-video-iframe").first();
 		if (videoElement == null) {
 			// System.out.println("No video found for course.");
-			return null;
+			return "";
 		} else {
 			return videoElement.attr("src");
 		}
@@ -159,7 +163,15 @@ public class IversityScrapper implements CourseScrapper {
 			date = fullCourseDoc.select("li[title=End date]").text();
 		}
 		// Parse the date from iveristy's format.
-		return LocalDate.parse(date, iversityDateFormatter);
+		try {
+			// this might have invalid date format. need investigate. 
+			LocalDate res =  LocalDate.parse(date, iversityDateFormatter);
+			return res;
+		} catch ( Exception e) {
+			
+			return null; // return null for now
+		}
+		
 	}
 
 	/*
@@ -180,7 +192,12 @@ public class IversityScrapper implements CourseScrapper {
 	}
 
 	private String getCategoryFromCourse(Document fullCourseDoc) {
-		return fullCourseDoc.select("i[class=fa fa-bookmark fa-fw]").get(0).parent().text();
+		Elements ele = fullCourseDoc.select("i[class=fa fa-bookmark fa-fw]") ;
+		if (!ele.isEmpty()) {
+			return ele.get(0).parent().text();
+		} else {
+			return "";
+		}
 	}
 
 	/*
@@ -200,7 +217,7 @@ public class IversityScrapper implements CourseScrapper {
 	 * bother trying to read text from an image. Maybe there is a better way.
 	 */
 	private String getUniversityFromCourse(Document fullCourseDoc) {
-		return null;
+		return "";
 	}
 
 	/*

@@ -118,7 +118,7 @@ public class CanvasScrapper implements CourseScrapper {
 		String university = obj.get("logo").getAsJsonObject().get("label").getAsString();
 		int courseLength = 0; // don't see any course length info so far. Need
 								// to check
-		String videoLink = null; // a few page might have a youtube player.
+		String videoLink = ""; // a few page might have a youtube player.
 									// Didn't do implementation regards those.
 									// Need to check
 		String longDescription = null;

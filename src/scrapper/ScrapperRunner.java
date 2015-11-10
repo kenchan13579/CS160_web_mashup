@@ -2,6 +2,7 @@ package scrapper;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,30 +27,50 @@ public class ScrapperRunner {
 		try {
 			System.out.println("Connecting to Database ...");
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			java.sql.Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/moocs160", "root", "");
+			java.sql.Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/moocs160", "root", "");
 			System.out.println("Connected to moocs160 as root");
 
 			// now build the SQL statement
-			Statement statement = connection.createStatement();
+			PreparedStatement statement;
+			
 			String query = "";
 			for (Course c : courses) {
 				// start_date format is bad.. had to alter table to accept null
-				query = "insert into course_data values" + "(null,'" + c.getTitle() + "','" + c.getShortDescription()
-						+ "','" + c.getLongDescription() + "','" + c.getCourseLink() + "','" + c.getVideoLink()
-						+ "',"/* +c.getStartDate() */
-						+ "null," + c.getCourseLength() + ",'" + c.getCourseImage() + "','" + c.getCategorey() + "','"
-						+ c.getSite() + "','" + c.getCourseFee() + "','" + c.getLanguage() + "','" + c.getCertficate()
-						+ "','" + c.getUniversity() + "','" + c.getTimeScraped() + "')";
+				query = "INSERT INTO course_data (title,short_desc,long_desc,course_link,video_link,start_date,course_length"
+						+ ",course_image,category,site,course_fee,language,certificate,university,time_scraped)"
+						+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?"+")";
+				statement = connection.prepareStatement(query);
+				statement.setString(1, c.getTitle());
+				statement.setString(2, c.getShortDescription());
+				statement.setString(3, c.getLongDescription());
+				statement.setString(4, c.getCourseLink());
+				statement.setString(5, c.getVideoLink());
+				if ( c.getStartDate()!=null) {
+					statement.setDate(6, Date.valueOf(c.getStartDate()));
+				} else {
+					// current date instead of null 
+					statement.setDate(6,new Date(Calendar.getInstance().getTimeInMillis()));
+				}
+				statement.setInt(7, c.getCourseLength());
+				statement.setString(8, c.getCourseImage());
+				statement.setString(9, c.getCategorey());
+				statement.setString(10, c.getCourseLink());
+				statement.setInt(11, c.getCourseFee());
+				statement.setString(12, c.getLanguage());
+				statement.setString(13, c.getCertficate().toString());
+				statement.setString(14, c.getUniversity());
+				statement.setDate(15, Date.valueOf(c.getTimeScraped()));
 				try{
-				statement.executeUpdate(query);
-				System.out.println(query);
+				statement.executeUpdate();
+				statement.close();
+				//System.out.println(query);
 				}catch (SQLException e){
 					// this will catch the sql error if database doesnt take course data
 					//e.printStackTrace();
-					System.out.println(c.getTitle() + " : had an SQL error");
+					System.out.println(c.getTitle() + " : had an SQL error - " + e.getMessage());
 				}
 			}
-			statement.close();
+			
 			connection.close();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
@@ -73,7 +94,6 @@ public class ScrapperRunner {
 		List<CourseScrapper> scrapers = new ArrayList<>();
 		scrapers.add(new CanvasScrapper());
 		scrapers.add(new IversityScrapper());
-
 		return scrapers.parallelStream().flatMap(scraper -> scraper.scrapeCourses().stream())
 				.collect(Collectors.toList());
 	}
