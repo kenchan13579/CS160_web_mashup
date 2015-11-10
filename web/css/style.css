@@ -1,0 +1,91 @@
+body {
+    background-color: #e1e8f0;
+}
+.navbar {
+    margin:0;
+    background-color: rgba(56,58,63, 0.9);
+    border:none;
+    border-radius: 0;
+    width:100%;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 99;
+}
+.navbar a {
+
+    color:white !important;
+    -webkit-transition: color 0.6s ease-in-out;
+    -moz-transition: color 0.6s ease-in-out;
+    -ms-transition: color 0.6s ease-in-out;
+    -o-transition: color 0.6s ease-in-out;
+    transition: color 0.6s ease-in-out;
+}
+.navbar a:hover {
+
+    color:#e62739 !important;
+}
+
+#section-search {
+    background-color: #9068be;
+    min-height: 80px;
+    margin-bottom: 30px;
+}
+#section-search form {
+    margin:20px auto;
+}
+#slideshow {
+    margin-top:50px;
+    padding: 50px 5% 0px 5%;
+}
+#search-input,
+.btn-addon {
+    height:40px;
+}
+.thumbnail {
+    height:350px;
+    overflow:auto;
+    background-color:#6ed3cf;
+}
+.thumbnail a {
+    color:white;
+}
+.thumbnail p {
+    color:white;
+    font-size: 0.8em;
+
+}
+.item .slideshow-caption{
+    width:50%;
+    padding:5px 10px;
+    position: relative;
+    top:-150px;
+    left:40%;
+    overflow-x: hidden;
+    background-color: rgba(56,58,63, 0.7);
+    border-radius:15px;
+}
+.item.active .slideshow-caption {
+    display:inline-block;
+    -webkit-transition: background 1s ease-in-out;
+    -moz-transition: background 1s ease-in-out;
+    -ms-transition: background 1s ease-in-out;
+    -o-transition: background 1s ease-in-out;
+    transition: background 1s ease-in-out;
+}
+
+.item .course-item:hover  .slideshow-caption {
+   background-color: #e62739;
+}
+.item .slideshow-caption p{
+    color:white;
+    font-size:0.7em;
+    font-size: bolder;
+}
+@media (max-width : 991px) {
+    .thumbnail {
+    height:380px;
+    overflow:auto;
+    }
+}
+

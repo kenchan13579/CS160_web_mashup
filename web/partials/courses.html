@@ -1,0 +1,22 @@
+<div class="container">
+    <div ng-repeat="course in courses">
+        <div class="col-sm-6 col-md-3">
+
+                <div class="thumbnail">
+                    <a ng-href="{{course.site}}">
+                         <img  ng-src="{{course.course_image}}" alt="{{course.title}}">
+                    </a>
+                  <div class="caption">
+
+                    <a ng-href="{{course.site}}"><h5>{{course.title}}</h5></a>
+                    <button type="button" class="btn">{{course.start_date}}</button>
+                    <button type="button" class="btn">{{course.language}}</button>
+                    <p>{{course.university}}</p>
+                  </div>
+                </div><!--thumbnail end-->
+
+        </div>
+    </div>
+
+</div>
+
