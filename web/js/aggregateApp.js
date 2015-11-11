@@ -18,10 +18,8 @@ aggregateApp.controller("aggregateCtrl", function($scope, $http) {
     $scope.courseDetail = [];
     $scope.openCourseDetail = function(index) {
         $scope.courseDetail[index] = true;
-        console.log(index);
     };
     $scope.closeCourseDetail = function(index) {
-        console.log("test");
         $scope.courseDetail[index] = false;
 
     }
@@ -44,9 +42,19 @@ aggregateApp.directive("courses", function() {
     return {
         restrict: 'E',
         templateUrl: "./partials/courses.html",
-        link: function ( scope , ele, attr ) {
-            var iframewidth = $("iframe").width();
-            $("iframe").css("height", iframewidth);
+        link: function(scope, ele, attr) {
+            $(document).on("click", ".btn-show-video", function() {
+                $(this).hide();
+                var src = $(this).attr("data-video-link");
+                var videoFrame = '<iframe id="videoFrame" frameborder="0" src=' + src + '></iframe>';
+                $(videoFrame).insertAfter($(this));
+                var iframewidth = $("#videoFrame").width();
+                $("iframe").css("height", iframewidth);
+            });
+            $(document).on("click", ".btn-close", function() {
+                $(".btn-show-video").show();
+                $("#videoFrame").remove();
+            });
         }
     };
 });
@@ -61,16 +69,15 @@ aggregateApp.directive("advancedPanel", function() {
                 scope.panelOn = false;
                 scope.$apply();
             });
-            setTimeout(function(){
+            setTimeout(function() {
                 $(".loading").remove();
-            },1500);
+            }, 1500);
         }
     }
 });
 
-aggregateApp.filter('trustUrl', function ($sce) {
+aggregateApp.filter('trustUrl', function($sce) {
     return function(url) {
-      return $sce.trustAsResourceUrl(url);
+        return $sce.trustAsResourceUrl(url);
     };
-  });
-
+});

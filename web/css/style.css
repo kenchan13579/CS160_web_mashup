@@ -128,10 +128,12 @@ body {
 .window form {
     position: relative;
 }
+
 #btn-close {
     position: absolute;
-    top:10%;
-    right:4%;
+    color:white;
+    top:5%;
+    right:2%;
     cursor: pointer;
 }
 .mask {
@@ -144,6 +146,7 @@ body {
     z-index: 98;
 }
 .window {
+    padding-top:50px;
     position:fixed;
     top:15%;
     left:15%;
@@ -152,8 +155,30 @@ body {
     color:#666;
     background: white;
     border: 1px solid #666;
-    z-index: 99;
+    z-index: 98;
     overflow-y: auto;
+}
+.window-header {
+    line-height: 50px;
+    position:fixed;
+    top:15%;
+    left:15%;
+    width:75%;
+    height:50px;
+    color:white;
+    background-color: #9068be;
+    z-index: 99;
+    overflow:hidden;
+}
+
+.window p {
+    font-size: 0.9em;
+}
+.window li {
+    list-style: none;
+}
+.window .btn-2x {
+    font-size: 1em;
 }
 iframe {
     width:100%;

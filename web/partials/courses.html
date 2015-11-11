@@ -1,12 +1,11 @@
 <div class="container">
-    <div ng-repeat="course in courses | filter: query as results" >
+    <div ng-repeat="course in courses | filter: query as results track by $index" >
         <div class="col-sm-6 col-md-3">
-
-                <div class="thumbnail" >
-                    <a ng-href="{{course.site}}">
-                         <img  ng-src="{{course.course_image}}" alt="{{course.title}}">
-                    </a>
-                  <div class="caption">
+            <div class="thumbnail" >
+                <a ng-href="{{course.site}}">
+                    <img  ng-src="{{course.course_image}}" alt="{{course.title}}">
+                </a>
+                <div class="caption">
                     <a ng-href="{{course.site}}"><h5>{{course.title}}</h5></a>
                     <button class="btn btn-purple">{{course.start_date}}</button>
                     <button  class="btn btn-primary">{{course.language}}</button>
@@ -15,40 +14,45 @@
                     <button ng-if="course.certificate=='yes'" class="btn btn-red">Certificate</button>
                     <button ng-if="course.course_fee==0" class="btn btn-yellow">FREE</button>
                     <button ng-if="course.course_fee!=0" class="btn btn-red">{{course.course_fee}}</button>
-                  </div>
-                  <button  class="btn btn-more form-control btn-purple" ng-click="openCourseDetail($index)">More...</button>
+                </div>
+                <button  class="btn btn-more form-control btn-purple" ng-click="openCourseDetail($index)">More...</button>
                 <div ng-show="courseDetail[$index]">
                     <div class="mask"></div>
-                    <div class="window container" >
-                            <center><h4>{{course.title}}</h4></center>
-                            <small>{{course.short_desc}}</small>
-                            <div class="row">
-                                <div class="col-sm-4"><img class="img-responsive" ng-src="{{course.course_image }}"></div>
-                               <div class="col-sm-4"><iframe ng-if="course.video_link!=''" allowfullscreen="" frameborder="0" src="{{course.video_link | trustUrl}}"></iframe></div>
-                                <div class="col-sm-4">
-                                    <ul>
-                                         <li>Language: {{course.language}}</li>
-                                        <li>Cost: ${{course.course_fee}}</li>
-                                        <li>Category: {{course.category}}</li>
-                                        <li>University: {{course.university}}</li>
-                                        <li>Certificate: {{course.certificate}}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <p>{{course.long_desc}}</p>
-                            <center>
-                            <a ng-href="{{course.course_link}}" class="btn btn-purple">Go to Course</a>
-                            <a ng-href="{{course.site}}" class="btn btn-purple">Go to Site</a>
-                            <button class="btn btn-purple" ng-click="closeCourseDetail($index)"><i class="fa fa-times-circle"></i>Close</button>
-                            </center>
-                            <span id="btn-close" ng-click="closeCourseDetail($index)"><i class="fa fa-times"></i></span>
+                    <div class="window-header">
+                             <center><h4>{{course.title}}</h4></center>
+                              <span id="btn-close" class="btn-close" ng-click="closeCourseDetail($index)"><i class="fa fa-2x fa-times"></i></span>
                     </div>
+                    <div class="window container" >
+                        <h6>{{course.short_desc}}</h6>
+                        <div class="row">
+                            <div class="col-sm-4"><img class="img-responsive" ng-src="{{course.course_image }}"></div>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn-show-video form-control" ng-if="course.video_link" data-video-link="{{course.video_link | trustUrl}}"><i class="fa fa-2x fa-play"></i>Show preview video</button>
+                            </div>
+                            <div class="col-sm-4">
+                                <ul>
+                                    <li><button type="button" class="btn btn-red btn-2x">Language: {{course.language}}</button></li>
+                                    <li><button type="button" class="btn btn-yellow btn-2x">Cost: ${{course.course_fee}}</button></li>
+                                    <li><button type="button" class="btn btn-success btn-2x">Category: {{course.category}}</button></li>
+                                    <li><button type="button" class="btn btn-purple btn-2x">University: {{course.university}}</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-2x">Certificate: {{course.certificate}}</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p>{{course.long_desc}}</p>
+                            </div>
+                        </div>
 
+                        <center>
+                        <a ng-href="{{course.course_link}}" class="btn btn-purple btn-2x">Go to Course</a>
+                        <button class="btn btn-purple btn-close btn-2x" ng-click="closeCourseDetail($index)"><i class="fa fa-times-circle"></i>Close</button>
+                        </center>
+
+                    </div>
                 </div>
                 </div><!--thumbnail end-->
-
+            </div>
         </div>
     </div>
-
-</div>
-
