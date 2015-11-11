@@ -10,6 +10,14 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body ng-controller="aggregateCtrl">
+        <div class="loading">
+        <div class="sk-folding-cube">
+          <div class="sk-cube1 sk-cube"></div>
+          <div class="sk-cube2 sk-cube"></div>
+          <div class="sk-cube4 sk-cube"></div>
+          <div class="sk-cube3 sk-cube"></div>
+        </div>
+        </div>
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -33,10 +41,9 @@
                 <div class="col-sm-offset-3 col-sm-6">
                      <form method="GET">
                         <div class="input-group">
-                            <input type="text" id="search-input" class="form-control" name="query" placeholder="find out courses you interested in!">
+                            <input type="search" id="search-input" class="form-control" ng-model="query" name="query" placeholder="find out courses you interested in!" >
                             <span class="input-group-btn">
-                                <button class="btn btn-default btn-addon"  type="button"><i class="fa fa-search" ></i></button>
-                                <button class="btn btn-default btn-addon" id="advanced-options" type="button"><i class="fa fa-bars"></i></button>
+                                <button class="btn btn-default btn-addon" ng-click="panelOn=true" type="button"><i class="fa fa-bars" ></i></button>
                             </span>
                         </div>
                         <button class="btn btn-success form-control" type="button">Get a random course you might like</button>
@@ -45,6 +52,7 @@
             </div>
 
         </section>
+        <advanced-panel ng-show="panelOn"></advanced-panel>
         <courses ng-controller="courseCtrl"></courses>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 

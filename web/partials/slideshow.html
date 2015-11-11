@@ -2,7 +2,7 @@
   <!-- Wrapper for slides -->
   <div class="carousel-inner" role="listbox" >
     <div class="item" ng-class="{active:$first}" ng-repeat="group in slideshow" >
-      <span class="col-md-4 course-item"  ng-repeat="course in group" >
+      <span class="col-xs-4 course-item"  ng-repeat="course in group" >
           <a ng-href="{{course.site}}">
           <img class="img-responsive img-circle" ng-src="{{course.course_image}}" alt="{{course.title}}">
           <div class="slideshow-caption">

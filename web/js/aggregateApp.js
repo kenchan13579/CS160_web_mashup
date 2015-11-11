@@ -1,5 +1,6 @@
+'use strict';
 var aggregateApp = angular.module("aggregateApp", []);
-var aggregateCtrl = aggregateApp.controller("aggregateCtrl", function($scope, $http) {
+aggregateApp.controller("aggregateCtrl", function($scope, $http) {
     $scope.slideshow = [];
     $http.get("./webservice/courses.php")
         .then(function(res) {
@@ -14,27 +15,61 @@ var aggregateCtrl = aggregateApp.controller("aggregateCtrl", function($scope, $h
                 }
             }
         });
+    $scope.courseDetail = [];
+    $scope.openCourseDetail = function(index) {
+        $scope.courseDetail[index] = true;
+        console.log(index);
+    };
+    $scope.closeCourseDetail = function(index) {
+        console.log("test");
+        $scope.courseDetail[index] = false;
+
+    }
 });
-var courseCtrl = aggregateApp.controller("courseCtrl", function($scope, $http) {
+aggregateApp.controller("courseCtrl", function($scope, $http) {
 
 });
-var slideshow = aggregateApp.directive("slideshow", function() {
+aggregateApp.directive("slideshow", function() {
     return {
         restrict: 'E',
         templateUrl: "./partials/slideshow.html",
         link: function(scope, ele, attr) {
-           $(ele).find(".carousel").carousel({
-            interval:3500
-           });
+            $(ele).find(".carousel").carousel({
+                interval: 3500
+            });
         }
     };
 });
-var courses = aggregateApp.directive("courses", function() {
+aggregateApp.directive("courses", function() {
     return {
         restrict: 'E',
         templateUrl: "./partials/courses.html",
-        link: function(scope, ele, attr) {
-
+        link: function ( scope , ele, attr ) {
+            var iframewidth = $("iframe").width();
+            $("iframe").css("height", iframewidth);
         }
     };
 });
+aggregateApp.directive("advancedPanel", function() {
+    return {
+        restrict: 'E',
+        templateUrl: "./partials/advancedPanel.html",
+        link: function(scope, ele, attr) {
+            scope.panelOn = false;
+            $(".mask,#btn-close").on("click", function(e) {
+                e.stopPropagation();
+                scope.panelOn = false;
+                scope.$apply();
+            });
+            setTimeout(function(){
+                $(".loading").remove();
+            },2500);
+        }
+    }
+});
+
+aggregateApp.filter('trustUrl', function ($sce) {
+    return function(url) {
+      return $sce.trustAsResourceUrl(url);
+    };
+  });
