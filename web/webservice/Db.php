@@ -5,7 +5,8 @@
         public function connect() {
 
             if  (!isset(self::$connection)) {
-                self::$connection = new mysqli( "localhost:3306" , "root" , "" , "moocs160");
+                $login = $this->readLogin("../../config.json");
+                self::$connection = new mysqli( $login["hostname"] , $login["username"] , $login["password"] , $login["db"]);
             }
             if ( self::$connection -> connect_errno) {
                 echo "Failed to connect to MySQL: " . self::$connection->connect_error;
@@ -17,7 +18,8 @@
         // update type query the database
         public function query($q) {
             $mysqli = $this -> connect();
-            $result = $mysqli -> query("SELECT * FROM course_data   ") OR DIE($mysqli->error);
+            mysqli_set_charset($mysqli,"utf8");
+            $result = $mysqli -> query($q) OR DIE($mysqli->error);
             return $result;
         }
         // select type query to the db
@@ -31,6 +33,9 @@
                 $rows[] = $row;
             }
             return $rows;
+        }
+        private function readLogin($filename){
+            return json_decode(file_get_contents($filename), true);
         }
     }
 ?>

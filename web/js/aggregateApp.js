@@ -1,5 +1,5 @@
 'use strict';
-var aggregateApp = angular.module("aggregateApp", []);
+var aggregateApp = angular.module("aggregateApp", ["ngAnimate"]);
 aggregateApp.controller("aggregateCtrl", function($scope, $http) {
     $scope.slideshow = [];
     $http.get("./webservice/courses.php")
@@ -63,7 +63,7 @@ aggregateApp.directive("advancedPanel", function() {
             });
             setTimeout(function(){
                 $(".loading").remove();
-            },2500);
+            },1500);
         }
     }
 });
@@ -73,3 +73,4 @@ aggregateApp.filter('trustUrl', function ($sce) {
       return $sce.trustAsResourceUrl(url);
     };
   });
+

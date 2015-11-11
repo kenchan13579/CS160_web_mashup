@@ -1,0 +1,28 @@
+[11-Nov-2015 05:52:06 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:52:06 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:52:06 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:54:43 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:54:43 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:54:43 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:55:19 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:55:19 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:55:19 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:57:28 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:57:28 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:57:28 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:57:35 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:57:35 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:57:35 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:59:27 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:59:27 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan0113'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:59:27 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:59:30 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:59:30 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan0113'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:59:30 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 05:59:31 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 05:59:31 UTC] PHP Warning:  mysqli::mysqli(): (42000/1044): Access denied for user 'kenchan0113'@'localhost' to database 'moocs160' in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 8
+[11-Nov-2015 05:59:31 UTC] PHP Fatal error:  Call to a member function query() on a non-object in /home/kenchan13579/public_html/aggregateSite/webservice/Db.php on line 20
+[11-Nov-2015 06:00:23 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 06:00:39 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 06:00:52 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5
+[11-Nov-2015 06:01:25 UTC] PHP Notice:  Undefined index: query in /home/kenchan13579/public_html/aggregateSite/webservice/courses.php on line 5

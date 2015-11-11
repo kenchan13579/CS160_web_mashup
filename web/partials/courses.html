@@ -1,8 +1,8 @@
 <div class="container">
-    <div ng-repeat="course in courses | filter: query as results ">
+    <div ng-repeat="course in courses | filter: query as results" >
         <div class="col-sm-6 col-md-3">
 
-                <div class="thumbnail">
+                <div class="thumbnail" >
                     <a ng-href="{{course.site}}">
                          <img  ng-src="{{course.course_image}}" alt="{{course.title}}">
                     </a>
@@ -23,7 +23,7 @@
                             <center><h4>{{course.title}}</h4></center>
                             <small>{{course.short_desc}}</small>
                             <div class="row">
-                                <div class="col-sm-4"><img class="img-responsive" src="{{course.course_image }}"></div>
+                                <div class="col-sm-4"><img class="img-responsive" ng-src="{{course.course_image }}"></div>
                                <div class="col-sm-4"><iframe ng-if="course.video_link!=''" allowfullscreen="" frameborder="0" src="{{course.video_link | trustUrl}}"></iframe></div>
                                 <div class="col-sm-4">
                                     <ul>
