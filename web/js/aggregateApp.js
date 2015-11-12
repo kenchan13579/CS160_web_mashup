@@ -5,6 +5,7 @@ aggregateApp.controller("aggregateCtrl", function($scope, $http) {
     $http.get("./webservice/courses.php")
         .then(function(res) {
             $scope.courses = res.data;;
+            console.log(res.data);
             var group = [];
             for (var i = 0; i < res.data.length / 2; i++) {
                 if (group.length < 3) {
@@ -46,7 +47,7 @@ aggregateApp.directive("courses", function() {
             $(document).on("click", ".btn-show-video", function() {
                 $(this).hide();
                 var src = $(this).attr("data-video-link");
-                var videoFrame = '<iframe id="videoFrame" frameborder="0" src=' + src + '></iframe>';
+                var videoFrame = '<iframe id="videoFrame" allowfullscreen frameborder="0" src=' + src + '></iframe>';
                 $(videoFrame).insertAfter($(this));
                 var iframewidth = $("#videoFrame").width();
                 $("iframe").css("height", iframewidth);
