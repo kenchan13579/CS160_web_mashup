@@ -44,7 +44,7 @@ aggregateApp.directive("courses", function() {
         restrict: 'E',
         templateUrl: "./partials/courses.html",
         link: function(scope, ele, attr) {
-            $(document).on("click", ".btn-show-video", function() {
+            $(ele).on("click", ".btn-show-video", function() {
                 $(this).hide();
                 var src = $(this).attr("data-video-link");
                 var videoFrame = '<iframe id="videoFrame" allowfullscreen frameborder="0" src=' + src + '></iframe>';
@@ -52,7 +52,7 @@ aggregateApp.directive("courses", function() {
                 var iframewidth = $("#videoFrame").width();
                 $("iframe").css("height", iframewidth);
             });
-            $(document).on("click", ".btn-close", function() {
+            $(ele).on("click", ".btn-close", function() {
                 $(".btn-show-video").show();
                 $("#videoFrame").remove();
             });

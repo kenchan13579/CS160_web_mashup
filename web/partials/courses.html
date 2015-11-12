@@ -1,5 +1,5 @@
 <div class="container">
-    <div ng-repeat="course in courses | filter: query as results track by $index" >
+    <div ng-repeat="course in courses track by $index " ng-show="([course] | filter:query).length > 0">
         <div class="col-sm-6 col-md-3">
             <div class="thumbnail" >
                 <a ng-href="{{course.site}}">
