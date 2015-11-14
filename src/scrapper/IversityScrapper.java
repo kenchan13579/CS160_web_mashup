@@ -24,6 +24,7 @@ public class IversityScrapper implements CourseScrapper {
 	LocalDate timeScraped;
 	DateTimeFormatter iversityDateFormatter = DateTimeFormatter.ofPattern("d MMM. yyyy");
 	List<Course> res;
+
 	public IversityScrapper() {
 		timeScraped = LocalDate.now();
 		res = new ArrayList<>();
@@ -38,7 +39,6 @@ public class IversityScrapper implements CourseScrapper {
 					.map(courseStub -> parseCourseStub(courseStub)) // parse
 					.filter(out -> out != null) // remove all null results.
 					.collect(Collectors.toList());
-			
 
 		} catch (IOException e) {
 			System.out.println("Unable to connect to Iversity homepage at: " + homepage);
@@ -56,8 +56,7 @@ public class IversityScrapper implements CourseScrapper {
 	 * 
 	 * Note: This currently ignores the "pro" courses since they are in a
 	 * different format.
-	 * 
-	 * TODO: include those Pro courses.
+	 *
 	 * 
 	 * @param courseStub
 	 *            This is the DOM element of the course listed on the homepage.
@@ -66,10 +65,6 @@ public class IversityScrapper implements CourseScrapper {
 	 * @return the parsed Course
 	 */
 	private Course parseCourseStub(Element courseStub) {
-
-		if (isProCourse(courseStub)) {
-			return null; // ignore pro courses due to different format.
-		}
 
 		// Extract all possible info from the stub
 		String title = getTitleFromStub(courseStub);
@@ -102,10 +97,21 @@ public class IversityScrapper implements CourseScrapper {
 		String university = getUniversityFromCourse(fullCourseDoc);
 		Certificate certficate = getCertificateFromCourse(fullCourseDoc);
 		CourseDetails details = getCourseDetailsFromCourse(fullCourseDoc);
-		
+
+		// Update values if "Pro" course
+		if (isProCourse(courseStub)) {
+			// pro courses are all "business" category
+			categorey = "Business";
+			// pro courses cost 399 Euro
+			courseFee = 399;
+			// pro courses offer certficates
+			certficate = Certificate.YES;
+			// pro courses take 5 weeks
+			courseLength = 5;
+		}
+
 		System.out.println("Parsed Iversity course: " + title);
-		
-		
+
 		return new Course(title, shortDescription, longDescription, courseLink, videoLink, startDate, courseLength,
 				courseImage, categorey, university, courseFee, language, university, certficate, timeScraped, details);
 	}
@@ -164,14 +170,14 @@ public class IversityScrapper implements CourseScrapper {
 		}
 		// Parse the date from iveristy's format.
 		try {
-			// this might have invalid date format. need investigate. 
-			LocalDate res =  LocalDate.parse(date, iversityDateFormatter);
+			// this might have invalid date format. need investigate.
+			LocalDate res = LocalDate.parse(date, iversityDateFormatter);
 			return res;
-		} catch ( Exception e) {
-			
-			return null; // return null for now
+		} catch (Exception e) {
+
+			return LocalDate.now(); // return now for startdate
 		}
-		
+
 	}
 
 	/*
@@ -181,7 +187,8 @@ public class IversityScrapper implements CourseScrapper {
 	private int getCourseLengthFromCourse(Document fullCourseDoc) {
 		Element courseLengthIcon = fullCourseDoc.select("i[class=fa fa-bell fa-fw]").first();
 		if (courseLengthIcon == null) {
-			//System.out.println("Warning: No course length found for course.");
+			// System.out.println("Warning: No course length found for
+			// course.");
 			return 0;
 		}
 
@@ -192,7 +199,7 @@ public class IversityScrapper implements CourseScrapper {
 	}
 
 	private String getCategoryFromCourse(Document fullCourseDoc) {
-		Elements ele = fullCourseDoc.select("i[class=fa fa-bookmark fa-fw]") ;
+		Elements ele = fullCourseDoc.select("i[class=fa fa-bookmark fa-fw]");
 		if (!ele.isEmpty()) {
 			return ele.get(0).parent().text();
 		} else {
@@ -239,7 +246,7 @@ public class IversityScrapper implements CourseScrapper {
 	private CourseDetails getCourseDetailsFromCourse(Document fullCourseDoc) {
 		Elements profElements = fullCourseDoc.select("img[class=avatar]");
 		if (profElements.isEmpty()) {
-			//System.out.println("Warning: No professor found for course.");
+			// System.out.println("Warning: No professor found for course.");
 			return new CourseDetails();
 		} else {
 			Element profElement = profElements.first();
