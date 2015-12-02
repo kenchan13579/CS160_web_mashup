@@ -1,4 +1,4 @@
-# [Live Site](http://www.sjsu-cs.org/cs160/sec1group2/web/):
+# [Live Site](http://www.sjsu-cs.org/cs160/sec1group2/)
 # Web Mashup 
 Team Members:
 
