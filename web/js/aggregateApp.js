@@ -1,7 +1,38 @@
 'use strict';
-var aggregateApp = angular.module("aggregateApp", ["ngAnimate"]);
+var aggregateApp = angular.module("aggregateApp", ["infinite-scroll", "ngAnimate", "datepicker", "radioButtons"]);
 aggregateApp.controller("aggregateCtrl", function($scope, $http) {
+    $scope.infiniteScroll = {
+        limit: 8,
+        pause: false,
+        loadMore: function() {
+            var that = this;
+            if (!this.pause){
+                that.pause = true;
+                that.limit = Math.min(that.limit + 1, $scope.courses.length | Number.MAX_VALUE);
+            }
+
+            setTimeout(function(){
+                if ( that.pause==true) {
+                    that.pause = false;
+                }
+            },200);
+        },
+        reset: function(){
+            this.limit = 8;
+        }
+    }
+    $scope.clearAll = function(){
+        $scope.finalFilter = {};
+    }
+    $scope.setSchool = function(school) {
+        $scope.finalFilter.schools = school;
+        $scope.setSchoolState(false);
+    }
+    $scope.setSchoolState = function(bool){
+        $scope.finalFilter.schoolHintState = bool;
+    }
     $scope.slideshow = [];
+    $scope.finalFilter = {}
     $http.get("./webservice/courses.php")
         .then(function(res) {
             $scope.courses = res.data;;
@@ -76,9 +107,82 @@ aggregateApp.directive("advancedPanel", function() {
         }
     }
 });
+aggregateApp.filter("ultimateFilter", function() {
+    function beginFilter(courseObj, filter) {
 
+
+        if (filter["radioModel"]) {
+            var tmp = [];
+            var price = filter["radioModel"];
+            if (price === "Free" || price === "Paid") {
+                for (var i = 0; i < courseObj.length; i++) {
+                    if (price === "Free" && courseObj[i]["course_fee"] === "0") {
+                        tmp.push(courseObj[i]);
+                    } else if (price == "Paid" && courseObj[i]["course_fee"] !== "0") {
+                        tmp.push(courseObj[i]);
+                    }
+                }
+                courseObj = tmp;
+            }
+
+        }
+
+        if (filter["schools"]) {
+            var temp = [];
+            for (var i = 0; i < courseObj.length; i++) {
+                if (courseObj[i]["university"].indexOf(filter["schools"]) !== -1) {
+                    temp.push(courseObj[i]);
+                }
+            }
+            courseObj = temp;
+        }
+        if (filter["dt"]) {
+            var temp = [];
+            for (var i = 0; i < courseObj.length; i++) {
+                try {
+                    var startDate = new Date(courseObj[i]["start_date"]);
+                    if (startDate >= filter["dt"]) {
+                        temp.push(courseObj[i]);
+                    }
+                } catch (e) {
+                    console.error("Wrong date format..");
+                }
+            }
+            courseObj = temp;
+        }
+        if (filter["query"]) {
+            var q = filter["query"];
+            courseObj = Array.prototype.filter.apply(courseObj, [function(course) {
+                for (var k in course) {
+                    if (course[k].indexOf(q) !== -1) {
+                        return true;
+                    }
+                }
+            }]);
+        }
+        return courseObj;
+    }
+    return beginFilter;
+});
 aggregateApp.filter('trustUrl', function($sce) {
     return function(url) {
         return $sce.trustAsResourceUrl(url);
     };
+});
+aggregateApp.directive("autoComplete", function($http){
+    return {
+        restrict: 'A',
+        transclude:true,
+        link : function( scope, element , attrs,ctrl,trans) {
+             $http.get("./webservice/university.php")
+        .then(function(res) {
+            scope.schools = res.data;;
+            console.log(res.data);
+            trans(scope,function(clone){
+                element.append(clone);
+            });
+        });
+
+        }
+    }
 });

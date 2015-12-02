@@ -2,6 +2,9 @@ body {
     background-color: #e1e8f0;
     padding-top:50px;
 }
+input {
+  border-radius: 5px;
+}
 .navbar {
     margin:0;
     background-color: rgba(56,58,63, 0.9);
@@ -35,7 +38,28 @@ body {
 #section-search form {
     margin:20px auto;
 }
-
+/** autocompalte **/
+.autocomplete {
+  max-height: 150px;
+  color:#666;
+  width:90%;
+  position:absolute;
+  top:53px;
+  left:5%;
+  border:1px solid #666;
+  background-color: rgba(255,255,255,0.6);
+  overflow-y:auto;
+  border-radius: 5px;
+  z-index: 99;
+}
+.autocomplete-hint {
+  padding:5px 10px;
+}
+.autocomplete-hint:hover {
+  color:white;
+  cursor:pointer;
+  background-color: rgba(144,104,190, 0.8);
+}
 /** video content and search **/
 
 .btn-yellow {
@@ -124,7 +148,45 @@ body {
     font-size:0.7em;
     font-size: bolder;
 }
+/** Datepicker **/
+ .full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+  }
+  .partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+  }
+
 /** advanced panel **/
+.advanced-search {
+  padding:20px;
+  color:white;
+  display:inline-block;
+  width:75%;
+  position:absolute;
+  top:-180px;
+  right:-4%;
+  z-index:95;
+  background-color: #5cb85c;
+  -webkit-box-shadow: 0  3px 2px #3d8b3d;
+  box-shadow:0 3px 2px #3d8b3d ;
+  border-radius: 8px;
+}
+.advanced-search:after {
+  content:"";
+  display:block;
+  width:0;
+  height:0;
+  position:absolute;
+  bottom:-20px;
+  right:50px;
+  border: 10px solid transparent;
+  border-top-color: #5cb85c;
+  border-right-width:0;
+}
 .window form {
     position: relative;
 }

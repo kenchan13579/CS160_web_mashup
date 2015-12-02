@@ -1,5 +1,8 @@
 <div class="container">
-    <div ng-repeat="course in courses track by $index " ng-show="([course] | filter:query).length > 0">
+     <p class="alert alert-success">Found {{(courses | ultimateFilter:finalFilter).length }} courses
+     </p>
+     <div infinite-scroll='infiniteScroll.loadMore()' infinite-scroll-distance='5'>
+    <div ng-repeat="course in courses | ultimateFilter:finalFilter | limitTo:infiniteScroll.limit track by course.id  " >
         <div class="col-sm-6 col-md-3">
             <div class="thumbnail" >
                 <a ng-href="{{course.site}}">
@@ -54,5 +57,7 @@
                 </div>
                 </div><!--thumbnail end-->
             </div>
+        </div> <!-- ng repeat end -->
         </div>
+
     </div>

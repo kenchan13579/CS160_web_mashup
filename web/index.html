@@ -10,7 +10,7 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body ng-controller="aggregateCtrl">
-        <div class="loading">
+        <div class="loading" style="display:none">
         <div class="sk-folding-cube">
           <div class="sk-cube1 sk-cube"></div>
           <div class="sk-cube2 sk-cube"></div>
@@ -27,10 +27,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">CS160 Aggreate educational site</a>
+                    <a class="navbar-brand" href="#">CS160 Aggregated educational site</a>
                 </div>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Our Team</a></li>
                         <li><a href="https://github.com/kenchan13579/CS160_web_mashup">Github Source</a></li>
                     </ul>
              </div><!-- container-fluid -->
@@ -41,22 +40,29 @@
                 <div class="col-sm-offset-3 col-sm-6">
                      <form method="GET">
                         <div class="input-group">
-                            <input type="search" id="search-input" class="form-control" ng-model="query" name="query" placeholder="find out courses you interested in!" >
+                             <advanced-panel ng-show="panelOn"></advanced-panel>
+                            <input type="search" id="search-input" class="form-control" ng-model="finalFilter.query" name="query" ng-change="infiniteScroll.reset()" placeholder="find out courses you interested in!" >
                             <span class="input-group-btn">
                                 <button class="btn btn-default btn-addon" ng-click="panelOn=true" type="button"><i class="fa fa-bars" ></i></button>
                             </span>
                         </div>
                         <button class="btn btn-success form-control" type="button">Get a random course you might like</button>
+
                     </form>
                 </div>
             </div>
 
         </section>
-        <advanced-panel ng-show="panelOn"></advanced-panel>
+
         <courses ng-controller="courseCtrl"></courses>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+        <script type="text/javascript" src="js/lib/ui-bootstrap-0.14.3.min.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script type="text/javascript" src="js/lib/infiniteScroll.js"></script>
+        <script type="text/javascript" src="js/Datepicker.js"> </script>
+        <script type="text/javascript" src="js/radioButtons.js"> </script>
         <script type="text/javascript" src="https://code.angularjs.org/1.4.7/angular-animate.min.js"></script>
         <script src="js/aggregateApp.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>

@@ -1,8 +1,31 @@
-<div class="mask"></div>
-<div class="window" >
-    <form>
-        <center><h4>Advanced Search</h4></center>
-        <p>to be added soon....</p>
+<div class="advanced-search">
+    <form method="get">
+        <div class="form-group">
+            <input  class="form-control" ng-model="finalFilter.schools" placeholder="Schools & Partner" ng-change="infiniteScroll.reset()" ng-keyup="setSchoolState(true)">
+            <div class="autocomplete" auto-complete ng-show="finalFilter.schoolHintState" >
+                <div class="autocomplete-hint" ng-repeat="hint in schools | filter:finalFilter.schools" ng-click="setSchool(hint)">{{hint}}</div>
+            </div>
+        </div>
+        <div class="input-group" ng-controller="radioCtrl">
+            <label>Price </label>
+            <div class="btn-group">
+            <label class="btn btn-success" ng-model="finalFilter.radioModel" uib-btn-radio="'All'" uncheckable>All</label>
+            <label class="btn btn-success" ng-model="finalFilter.radioModel" uib-btn-radio="'Free'" uncheckable>Free</label>
+            <label class="btn btn-success" ng-model="finalFilter.radioModel" uib-btn-radio="'Paid'" uncheckable>Paid</label>
+            </div>
+        </div>
+        <div ng-controller="DatepickerCtrl">
+            <label>Start Date</label>
+            <div class="input-group">
+
+                <input type="date" class="form-control" uib-datepicker-popup ng-model="finalFilter.dt" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"  ng-required="true" close-text="Close" ng-change="infiniteScroll.reset()"/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </div>
+
+        </div>
+        <center><button type="button" class="btn btn-success" ng-click="clearAll()">Clear Filters</button></center>
         <span id="btn-close"><i class="fa fa-times"></i></span>
     </form>
 </div>
