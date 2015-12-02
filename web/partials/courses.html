@@ -2,7 +2,7 @@
      <p class="alert alert-success">Found {{(courses | ultimateFilter:finalFilter).length }} courses
      </p>
      <div infinite-scroll='infiniteScroll.loadMore()' infinite-scroll-distance='5'>
-    <div ng-repeat="course in courses | ultimateFilter:finalFilter | limitTo:infiniteScroll.limit track by course.id  " >
+    <div ng-repeat="course in courses | ultimateFilter:finalFilter | limitTo:infiniteScroll.limit track by $index " >
         <div class="col-sm-6 col-md-3">
             <div class="thumbnail" >
                 <a ng-href="{{course.site}}">
@@ -44,7 +44,11 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
-                                <p>{{course.long_desc}}</p>
+                                .<div class="professor">
+                                    <img class="img-responsive" ng-src="{{course.profimage}}">
+                                    <div class="professor-name alert alert-info">{{course.profname}}</div>
+                                </div>
+                                <p >{{course.long_desc}}</p>
                             </div>
                         </div>
 

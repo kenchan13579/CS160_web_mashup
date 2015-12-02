@@ -21,6 +21,13 @@ aggregateApp.controller("aggregateCtrl", function($scope, $http) {
             this.limit = 8;
         }
     }
+    $scope.randomcourse = function (){
+        var max = $scope.courses.length -1 || 0;
+        var r = Math.floor(Math.random() * (max ));
+
+        var randomcourse = $scope.courses[r]["title"] || "";
+        $scope.finalFilter.query = randomcourse;
+    }
     $scope.clearAll = function(){
         $scope.finalFilter = {};
     }

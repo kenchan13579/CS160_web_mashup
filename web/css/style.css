@@ -148,6 +148,12 @@ input {
     font-size:0.7em;
     font-size: bolder;
 }
+/** professor **/
+.professor {
+  padding:15px;
+  width:20%;
+  float:right;
+}
 /** Datepicker **/
  .full button span {
     background-color: limegreen;
@@ -167,7 +173,7 @@ input {
   display:inline-block;
   width:75%;
   position:absolute;
-  top:-180px;
+  top:-213px;
   right:-4%;
   z-index:95;
   background-color: #5cb85c;
