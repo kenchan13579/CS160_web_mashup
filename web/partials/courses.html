@@ -1,15 +1,15 @@
 <div class="container">
      <p class="alert alert-success">Found {{(courses | ultimateFilter:finalFilter).length }} courses
      </p>
-     <div infinite-scroll='infiniteScroll.loadMore()' infinite-scroll-distance='5'>
+     <div infinite-scroll='infiniteScroll.loadMore()' infinite-scroll-distance='0'>
     <div ng-repeat="course in courses | ultimateFilter:finalFilter | limitTo:infiniteScroll.limit track by $index " >
         <div class="col-sm-6 col-md-3">
             <div class="thumbnail" >
-                <a ng-href="{{course.site}}">
+                <a target="_blank" ng-href="{{course.course_link}}">
                     <img  ng-src="{{course.course_image}}" alt="{{course.title}}">
                 </a>
                 <div class="caption">
-                    <a ng-href="{{course.site}}"><h5>{{course.title}}</h5></a>
+                    <a target="_blank" ng-href="{{course.course_link}}"><h5>{{course.title}}</h5></a>
                     <button class="btn btn-purple">{{course.start_date}}</button>
                     <button  class="btn btn-primary">{{course.language}}</button>
                     <button ng-if="course.university!=''" class="btn btn-red"> {{course.university}}</button>
@@ -42,9 +42,9 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" >
                             <div class="col-lg-12">
-                                .<div class="professor">
+                                <div class="professor" ng-if="{{course.profname}}">
                                     <img class="img-responsive" ng-src="{{course.profimage}}">
                                     <div class="professor-name alert alert-info">{{course.profname}}</div>
                                 </div>
@@ -53,7 +53,7 @@
                         </div>
 
                         <center>
-                        <a ng-href="{{course.course_link}}" class="btn btn-purple btn-2x">Go to Course</a>
+                        <a target="_blank" ng-href="{{course.course_link}}" class="btn btn-purple btn-2x">Go to Course</a>
                         <button class="btn btn-purple btn-close btn-2x" ng-click="closeCourseDetail($index)"><i class="fa fa-times-circle"></i>Close</button>
                         </center>
 

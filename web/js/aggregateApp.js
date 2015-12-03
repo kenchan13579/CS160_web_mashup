@@ -3,39 +3,28 @@ var aggregateApp = angular.module("aggregateApp", ["infinite-scroll", "ngAnimate
 aggregateApp.controller("aggregateCtrl", function($scope, $http) {
     $scope.infiniteScroll = {
         limit: 8,
-        pause: false,
         loadMore: function() {
-            var that = this;
-            if (!this.pause){
-                that.pause = true;
-                that.limit = Math.min(that.limit + 1, $scope.courses.length | Number.MAX_VALUE);
-            }
-
-            setTimeout(function(){
-                if ( that.pause==true) {
-                    that.pause = false;
-                }
-            },200);
+            this.limit = Math.min(this.limit + 1, $scope.courses.length | Number.MAX_VALUE);
         },
-        reset: function(){
+        reset: function() {
             this.limit = 8;
         }
     }
-    $scope.randomcourse = function (){
-        var max = $scope.courses.length -1 || 0;
-        var r = Math.floor(Math.random() * (max ));
+    $scope.randomcourse = function() {
+        var max = $scope.courses.length - 1 || 0;
+        var r = Math.floor(Math.random() * (max));
 
         var randomcourse = $scope.courses[r]["title"] || "";
         $scope.finalFilter.query = randomcourse;
     }
-    $scope.clearAll = function(){
+    $scope.clearAll = function() {
         $scope.finalFilter = {};
     }
     $scope.setSchool = function(school) {
         $scope.finalFilter.schools = school;
         $scope.setSchoolState(false);
     }
-    $scope.setSchoolState = function(bool){
+    $scope.setSchoolState = function(bool) {
         $scope.finalFilter.schoolHintState = bool;
     }
     $scope.slideshow = [];
@@ -161,7 +150,7 @@ aggregateApp.filter("ultimateFilter", function() {
             var q = filter["query"];
             courseObj = Array.prototype.filter.apply(courseObj, [function(course) {
                 for (var k in course) {
-                    if (course[k].indexOf(q) !== -1) {
+                    if (course[k] && course[k].indexOf(q) !== -1) {
                         return true;
                     }
                 }
@@ -176,19 +165,19 @@ aggregateApp.filter('trustUrl', function($sce) {
         return $sce.trustAsResourceUrl(url);
     };
 });
-aggregateApp.directive("autoComplete", function($http){
+aggregateApp.directive("autoComplete", function($http) {
     return {
         restrict: 'A',
-        transclude:true,
-        link : function( scope, element , attrs,ctrl,trans) {
-             $http.get("./webservice/university.php")
-        .then(function(res) {
-            scope.schools = res.data;;
-            console.log(res.data);
-            trans(scope,function(clone){
-                element.append(clone);
-            });
-        });
+        transclude: true,
+        link: function(scope, element, attrs, ctrl, trans) {
+            $http.get("./webservice/university.php")
+                .then(function(res) {
+                    scope.schools = res.data;;
+                    console.log(res.data);
+                    trans(scope, function(clone) {
+                        element.append(clone);
+                    });
+                });
 
         }
     }
