@@ -21,3 +21,18 @@ Your design should have users’ need in mind. Users for this website typically 
     2.      Professional looking for material to enhance their job skill on future resumes.
     3.      Professional looking for training material for their job need.
     4.    Companies using some of the open online courses as a universal criteria for job requirements.
+
+## Screenshots
+
+Main Screen
+![main screen](/screenshots/p1.jpg)
+
+Aggregated course
+![aggregated course](/screenshots/p2.jpg)
+
+course details
+![course details](/screenshots/p3.jpg)
+
+advanced search
+![advanced search](/screenshots/p5.jpg)
+    
