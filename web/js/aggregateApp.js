@@ -147,10 +147,10 @@ aggregateApp.filter("ultimateFilter", function() {
             courseObj = temp;
         }
         if (filter["query"]) {
-            var q = filter["query"];
+            var q = filter["query"].toLowerCase();
             courseObj = Array.prototype.filter.apply(courseObj, [function(course) {
                 for (var k in course) {
-                    if (course[k].toLowerCase() && course[k].indexOf(q).toLowerCase() !== -1) {
+                    if (course[k] && (typeof course[k]=='string') && course[k].toLowerCase().indexOf(q) !== -1) {
                         return true;
                     }
                 }
