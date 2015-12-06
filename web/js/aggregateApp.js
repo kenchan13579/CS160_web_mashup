@@ -126,7 +126,7 @@ aggregateApp.filter("ultimateFilter", function() {
         if (filter["schools"]) {
             var temp = [];
             for (var i = 0; i < courseObj.length; i++) {
-                if (courseObj[i]["university"].indexOf(filter["schools"]) !== -1) {
+                if (courseObj[i]["university"].toLowerCase().indexOf(filter["schools"].toLowerCase()) !== -1) {
                     temp.push(courseObj[i]);
                 }
             }
@@ -150,7 +150,7 @@ aggregateApp.filter("ultimateFilter", function() {
             var q = filter["query"];
             courseObj = Array.prototype.filter.apply(courseObj, [function(course) {
                 for (var k in course) {
-                    if (course[k] && course[k].indexOf(q) !== -1) {
+                    if (course[k].toLowerCase() && course[k].indexOf(q).toLowerCase() !== -1) {
                         return true;
                     }
                 }

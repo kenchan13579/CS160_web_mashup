@@ -16,7 +16,7 @@
                     <button ng-if="course.category!=''" class="btn btn-success">{{course.category}}</button>
                     <button ng-if="course.certificate=='yes'" class="btn btn-red">Certificate</button>
                     <button ng-if="course.course_fee==0" class="btn btn-yellow">FREE</button>
-                    <button ng-if="course.course_fee!=0" class="btn btn-red">{{course.course_fee}}</button>
+                    <button ng-if="course.course_fee!=0" class="btn btn-red">{{course.course_fee | currency:"USD$":0}}</button>
                 </div>
                 <button  class="btn btn-more form-control btn-purple" ng-click="openCourseDetail($index)">More...</button>
                 <div ng-show="courseDetail[$index]">
@@ -31,14 +31,15 @@
                             <div class="col-sm-4"><img class="img-responsive" ng-src="{{course.course_image }}"></div>
                             <div class="col-sm-4">
                                 <button type="button" class="btn-show-video form-control" ng-if="course.video_link" data-video-link="{{course.video_link | trustUrl}}"><i class="fa fa-2x fa-play"></i>Show preview video</button>
+                                <center><a target="_blank" ng-if="course.video_link" ng-href="{{course.video_link | trustUrl}}" class="btn btn-success">Go to video Site</a></center>
                             </div>
                             <div class="col-sm-4">
                                 <ul>
                                     <li><button type="button" class="btn btn-red btn-2x">Language: {{course.language}}</button></li>
-                                    <li><button type="button" class="btn btn-yellow btn-2x">Cost: ${{course.course_fee}}</button></li>
-                                    <li><button type="button" class="btn btn-success btn-2x">Category: {{course.category}}</button></li>
-                                    <li><button type="button" class="btn btn-purple btn-2x">University: {{course.university}}</button></li>
-                                    <li><button type="button" class="btn btn-primary btn-2x">Certificate: {{course.certificate}}</button></li>
+                                    <li ng-if="course.course_fee && course.course_fee!=''"><button type="button" class="btn btn-yellow btn-2x">Cost: {{course.course_fee | currency:"USD$":0}}</button></li>
+                                    <li ng-if="course.category && course.category!=''"><button type="button" class="btn btn-success btn-2x">Category: {{course.category}}</button></li>
+                                    <li ng-if="course.university!=''"><button type="button" class="btn btn-purple btn-2x">University: {{course.university}}</button></li>
+                                    <li ng-if="course.certificate && course.certificate!=''"><button type="button" class="btn btn-primary btn-2x">Certificate: {{course.certificate}}</button></li>
                                 </ul>
                             </div>
                         </div>
