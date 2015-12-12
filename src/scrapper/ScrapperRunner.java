@@ -24,17 +24,6 @@ public class ScrapperRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// courses should be dumped in db here.
-		// connect to MySql
-		// The following few lines of code are used to connect to a database so
-		// the scraped course content can be stored.
-		// make sure you create a database named moocs160 in your local mysql
-		// database before running this code
-		// default mysql database in your local machine is ID:root with no
-		// password
-		// you can download moocs.sql database template from your Canvas
-		// account->modules->Team Project area
-		
 	}
 
 	private List<Course> scrape() {
